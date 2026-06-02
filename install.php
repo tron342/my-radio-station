@@ -226,7 +226,6 @@ if( isset($_POST['step']) && $_POST['step'] == "2" )
 	if(!$error)
 	{
 		ShowProgress("Adding user <b>'{$pd_user}'</b>.");
-		$pd_pass   = hash_password($pd_pass, FALSE);
 		$sql = "INSERT INTO `users` (`id`, `ip_address`, `username`, `password`, `salt`, `email`, `activation_code`, `forgotten_password_code`, `forgotten_password_time`, `remember_code`, `created_on`, `last_login`, `active`, `first_name`, `last_name`, `company`, `phone`) VALUES (1, '127.0.0.1', '{$pd_user}', '{$pd_pass}', '', 'admin@admin.com', '', NULL, NULL, '3o6rg9FOxhHe31KAtJaLG.', 1268889823, 1483117005, 1, 'Admin', 'istrator', 'ADMIN', '0');";
 		$error = !exec_sql($sql);
 	}
@@ -289,44 +288,36 @@ if( isset($_POST['step']) && $_POST['step'] == "3" )
 	<link href="assets/css/style.css" rel="stylesheet" type="text/css" />
 	<link href="assets/css/responsive.css" rel="stylesheet" type="text/css" />
 	<link href="assets/css/custom-icon-set.css" rel="stylesheet" type="text/css" />
-	<!-- END CSS TEMPLATE -->
 	<script src="assets/plugins/jquery-1.8.3.min.js" type="text/javascript"></script> 
 	<style type="text/css">
 	.form-horizontal .control-group { margin-bottom: 0px;}
 	</style>
 </head>
-<!-- END HEAD -->
-<!-- BEGIN BODY -->
 <body class="">
-<!-- BEGIN CONTAINER -->
 <div class="page-container row-fluid">
-  <!-- BEGIN PAGE CONTAINER-->
   <div class="page-content" style="margin: 0 !important;"> 
     <div class="content">
 
-<!-- INSTALLATION -->
 	<div class="span2"></div>
 	<div class="span8">
         <div class="grid simple horizontal red">
           <div class="grid-title text-left">
             <h3>·C·O·D·E·L·I·S·T·.·C·C· - - - 
-	            RADIO <span class="bold">STATION</span> Installer 
-	            <span class="label label-important pull-right">STEP <?php echo $step."/".$step_count; ?></span>
+            RADIO <span class="bold">STATION</span> Installer 
+            <span class="label label-important pull-right">STEP <?php echo $step."/".$step_count; ?></span>
             </h3>
           </div>
           <div class="grid-body">
 
             <div class="form-wizard-steps">
               <ul class="wizard-steps">
-                <li class="<?php echo $step=="1"?"active":""; ?>" ><span class="step">1</span><span class="title">MySQL server</span></li>
-                <li class="<?php echo $step=="2"?"active":""; ?>"><span class="step">2</span><span class="title">Root user</span></li>
-                <li class="<?php echo $step=="3"?"active":""; ?>"><span class="step">3</span><span class="title">Install</span></li>
-                <li class="<?php echo $step=="4"?"active":""; ?>"><span class="step">4</span><span class="title">Finish</span></li>
+                <li class="<?php echo $step==1?"active":""; ?>" ><span class="step">1</span><span class="title">MySQL server</span></li>
+                <li class="<?php echo $step==2?"active":""; ?>"><span class="step">2</span><span class="title">Root user</span></li>
+                <li class="<?php echo $step==3?"active":""; ?>"><span class="step">3</span><span class="title">Install</span></li>
+                <li class="<?php echo $step==4?"active":""; ?>"><span class="step">4</span><span class="title">Finish</span></li>
               </ul>
               <div class="clearfix"></div>
             </div><br /><br />
-
-            <!-- <div class="alert alert-info">This application install and configure your radio station on this server. Please type settings and press 'Install'.</div> -->
 
 <?php if ($step == 1): ?>
 	<form class="form-login form-horizontal" method="post">
@@ -339,25 +330,25 @@ if( isset($_POST['step']) && $_POST['step'] == "3" )
 		<div class="control-group">
 			<label class="control-label required" for="host">Host</label>
 			<div class="controls">
-				<input type="text" name="mysql_host" id="host" class="span6" value="<?php echo isset($_POST['mysql_host'])?$_POST['mysql_host']:"localhost" ?>" autofocus />
+				<input type="text" name="mysql_host" id="host" class="span6" value="<?php echo isset($_POST['mysql_host'])?htmlspecialchars($_POST['mysql_host']):"localhost" ?>" autofocus />
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label required" for="user">User</label>
 			<div class="controls">
-				<input type="text" name="mysql_user" id="user" class="span6" value="<?php echo isset($_POST['mysql_user'])?$_POST['mysql_user']:"root" ?>" />
+				<input type="text" name="mysql_user" id="user" class="span6" value="<?php echo isset($_POST['mysql_user'])?htmlspecialchars($_POST['mysql_user']):"root" ?>" />
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label required" for="pass">Password</label>
 			<div class="controls">
-				<input type="text" name="mysql_pass" id="pass" class="span6" value="<?php echo isset($_POST['mysql_pass'])?$_POST['mysql_pass']:"" ?>" />
+				<input type="text" name="mysql_pass" id="pass" class="span6" value="<?php echo isset($_POST['mysql_pass'])?htmlspecialchars($_POST['mysql_pass']):"" ?>" />
 			</div>
 		</div>
 		<div class="control-group">
 			<label class="control-label required" for="database">Database</label>
 			<div class="controls">
-				<input type="text" name="mysql_db" id="database" class="span6" value="<?php echo isset($_POST['mysql_db'])?$_POST['mysql_db']:"radiostation" ?>" />
+				<input type="text" name="mysql_db" id="database" class="span6" value="<?php echo isset($_POST['mysql_db'])?htmlspecialchars($_POST['mysql_db']):"radiostation" ?>" />
 			</div>
 		</div>
 		<div class="form-actions">
@@ -372,10 +363,10 @@ if( isset($_POST['step']) && $_POST['step'] == "3" )
 <?php if ($step == 2): ?>
 	<form class="form-login form-horizontal" method="post">
 		<input type="hidden" name="step" value="2">
-		<input type="hidden" name="mysql_host" value="<?php echo $pd_mysql_host; ?>">
-		<input type="hidden" name="mysql_user" value="<?php echo $pd_mysql_user; ?>">
-		<input type="hidden" name="mysql_pass" value="<?php echo $pd_mysql_pass; ?>">
-		<input type="hidden" name="mysql_db" value="<?php echo $pd_mysql_db; ?>">
+		<input type="hidden" name="mysql_host" value="<?php echo htmlspecialchars($pd_mysql_host); ?>">
+		<input type="hidden" name="mysql_user" value="<?php echo htmlspecialchars($pd_mysql_user); ?>">
+		<input type="hidden" name="mysql_pass" value="<?php echo htmlspecialchars($pd_mysql_pass); ?>">
+		<input type="hidden" name="mysql_db" value="<?php echo htmlspecialchars($pd_mysql_db); ?>">
 		<h4 class="semi-bold">Step 2 - <span class="light">Root User</span></h4>
         <?php if (isset($MSG_PROGRESS) && !empty($MSG_PROGRESS)): ?>
         	<?php echo $MSG_PROGRESS ?>
@@ -434,31 +425,12 @@ if( isset($_POST['step']) && $_POST['step'] == "3" )
 	</form>
 <?php endif ?>
 
-
           </div>
         </div>
       </div>
-<!-- INSTALLATION END -->
     </div>
   </div>
  </div>
-<!-- END CONTAINER -->
 
 <div class="modal fade" id="player_modal" style="width: 420px;margin-left:-210px;"></div>
-<!-- BEGIN CORE JS FRAMEWORK--> 
-<script src="assets/plugins/jquery-ui/jquery-ui-1.10.1.custom.min.js" type="text/javascript"></script> 
-<script src="assets/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script> 
-<script src="assets/plugins/breakpoints.js" type="text/javascript"></script> 
-<script src="assets/plugins/jquery-unveil/jquery.unveil.min.js" type="text/javascript"></script> 
-<!-- END CORE JS FRAMEWORK --> 
-<!-- BEGIN PAGE LEVEL JS --> 	
-<script src="assets/plugins/jquery-slider/jquery.sidr.min.js" type="text/javascript"></script> 	
-<script src="assets/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script> 
-<script src="assets/plugins/pace/pace.min.js" type="text/javascript"></script>  
-<script src="assets/plugins/jquery-numberAnimate/jquery.animateNumbers.js" type="text/javascript"></script>
-<script src="assets/plugins/bootstrap-select2/select2.min.js" type="text/javascript"></script>
-<script src="assets/js/tabs_accordian.js" type="text/javascript"></script>
-<script src="assets/plugins/jquery-block-ui/jqueryblockui.js" type="text/javascript"></script>
-<!-- END PAGE LEVEL PLUGINS -->
-</body>
-</html>
+<script src="assets/plugins/jquery-ui/jquery-ui-1.10.1.custom.min
