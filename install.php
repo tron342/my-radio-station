@@ -1,16 +1,15 @@
 <?php
-define('MYSQL_CODEPAGE', 'utf8');
-define('MYSQL_COLLATE',  'utf8_unicode_ci');
+define('MYSQL_CODEPAGE', 'utf8mb4'); // Atualizado para suporte completo a emoticons e caracteres modernos
+define('MYSQL_COLLATE',  'utf8mb4_unicode_ci');
 define('BASEPATH', '');
 $error = false;
-$step = isset($_POST['step'])?$_POST['step']:1;
+$step = isset($_POST['step']) ? (int)$_POST['step'] : 1;
 $step_count = 4;
 $MSG_PROGRESS = "";
 
 $_TABLES['calendar'] = "`id` int(11) NOT NULL AUTO_INCREMENT,`name` varchar(255) NOT NULL,`starts` datetime NOT NULL,`ends` datetime NOT NULL,`duration` bigint(20) NOT NULL,`background_color` varchar(7) NOT NULL,`color` varchar(7) NOT NULL,`repeat_type` int(5) NOT NULL,`repeat_days` varchar(50) DEFAULT NULL,`no_end` tinyint(1) DEFAULT NULL,`end_date` date DEFAULT NULL,PRIMARY KEY (`id`)";
 
 $_TABLES['calendar_instance'] = "`id` int(11) NOT NULL AUTO_INCREMENT,`id_calendar` int(11) NOT NULL,`starts` datetime NOT NULL,`ends` datetime NOT NULL,`one-time` tinyint(1) NOT NULL,`repeat_type` int(1) NOT NULL,PRIMARY KEY (`id`)";
-
 
 $_TABLES['users_groups'] = "  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,`user_id` int(11) unsigned NOT NULL,`group_id` mediumint(8) unsigned NOT NULL,PRIMARY KEY (`id`),UNIQUE KEY `uc_users_groups` (`user_id`,`group_id`),KEY `fk_users_groups_users1_idx` (`user_id`),KEY `fk_users_groups_groups1_idx` (`group_id`)";
 
@@ -32,23 +31,20 @@ $_TABLES['users'] = "`id` int(11) unsigned NOT NULL AUTO_INCREMENT,`ip_address` 
 
 $_ADDITIONAL_SQL[] = "INSERT INTO `settings` (`time_zone`, `language`, `weekstart`) VALUES ('Africa/Algiers', 'english', 6);";
 $_ADDITIONAL_SQL[] = "INSERT INTO `groups` (`id`, `name`, `description`) VALUES (1, 'admin', 'Administrator'),(2, 'members', 'General User');";
-/*
-$_ADDITIONAL_SQL[] = array(
-	"Creating groups",
-	"INSERT INTO `users_groups` (`id`, `user_id`, `group_id`) VALUES (1, 1, 1),(2, 1, 2);"
-);*/
+
 $_ADDITIONAL_SQL[] = "ALTER TABLE `users_groups` ADD CONSTRAINT `fk_users_groups_users1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION, ADD CONSTRAINT `fk_users_groups_groups1` FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;";
 
 function checkPostData($name, $min_size, $max_size)
 {
   $data = isset($_POST[$name]) ? trim($_POST[$name]) : '';
   $s = mb_strlen($data);
-  if($s < $min_size || $s > $max_size)return NULL;
+  if($s < $min_size || $s > $max_size) return NULL;
   return $data;
 }
 
 function htmlEntitiesEx($string)
 {
+  if ($string === null) return '';
   return htmlspecialchars(preg_replace('|[\x00-\x09\x0B\x0C\x0E-\x1F\x7F-\x9F]|u', ' ', $string), ENT_QUOTES, 'UTF-8');
 }
 
@@ -76,22 +72,19 @@ function exec_sql($sql)
 	return true;
 }
 
+// ATUALIZADO: Removida a dependência do Bcrypt.php antigo. Agora usa o gerador nativo e seguro do PHP 8+
 function hash_password($password)
 {
 	if (empty($password))
 	{
 		return FALSE;
 	}
-	require_once("application/libraries/Bcrypt.php");
-	$params['rounds'] = 8;
-	$params['salt_prefix'] = version_compare(PHP_VERSION, '5.3.7', '<') ? '$2a$' : '$2y$';
-	$bcrypt = new Bcrypt($params);
-	return $bcrypt->hash($password);
+	return password_hash($password, PASSWORD_BCRYPT, ['cost' => 8]);
 }
 
 function updateConfigHelper($updateList, $name, $default)
 {
-  return isset($updateList[$name])?$updateList[$name]:$default;
+  return isset($updateList[$name]) ? $updateList[$name] : $default;
 }
 
 function updateConfig($updateList)
@@ -116,7 +109,6 @@ function updateConfig($updateList)
 		"?>";
 		if(@file_put_contents($file, $cfgData) !== strlen($cfgData))
 			return false;
-		//@chmod(@dirname($file), 0444);
 	}
 	return true;
 }
@@ -150,7 +142,6 @@ if( isset($_POST['step']) && $_POST['step'] == "1" )
 	if(!$error){
 		ShowProgress("Connecting to MySQL as <b>'{$pd_mysql_user}'</b>.");
 		$mysql_connection = @mysqli_connect($pd_mysql_host, $pd_mysql_user, $pd_mysql_pass);
-
 
 		if (mysqli_connect_errno()) {
 		    ShowError("Connect failed: ". mysqli_connect_error());
@@ -226,6 +217,7 @@ if( isset($_POST['step']) && $_POST['step'] == "2" )
 	if(!$error)
 	{
 		ShowProgress("Adding user <b>'{$pd_user}'</b>.");
+		$pd_pass = hash_password($pd_pass);
 		$sql = "INSERT INTO `users` (`id`, `ip_address`, `username`, `password`, `salt`, `email`, `activation_code`, `forgotten_password_code`, `forgotten_password_time`, `remember_code`, `created_on`, `last_login`, `active`, `first_name`, `last_name`, `company`, `phone`) VALUES (1, '127.0.0.1', '{$pd_user}', '{$pd_pass}', '', 'admin@admin.com', '', NULL, NULL, '3o6rg9FOxhHe31KAtJaLG.', 1268889823, 1483117005, 1, 'Admin', 'istrator', 'ADMIN', '0');";
 		$error = !exec_sql($sql);
 	}
@@ -267,6 +259,7 @@ if( isset($_POST['step']) && $_POST['step'] == "3" )
 }
 ?>
 <!DOCTYPE html>
+<html>
 <head>
 	<meta charset="utf-8" />
 	<meta http-equiv="content-type" content="text/html;charset=UTF-8" />
@@ -277,13 +270,10 @@ if( isset($_POST['step']) && $_POST['step'] == "3" )
 	<link rel="SHORTCUT ICON" href="assets/img/favicon.png"/>
 	<link href="assets/plugins/pace/pace-theme-flash.css" rel="stylesheet" type="text/css" media="screen" />
 	<link href="assets/plugins/jquery-slider/css/jquery.sidr.light.css" rel="stylesheet" type="text/css" media="screen" />
-	<!-- BEGIN CORE CSS FRAMEWORK -->
 	<link href="assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
 	<link href="assets/plugins/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" type="text/css" />
 	<link href="assets/plugins/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css" />
 	<link href="assets/css/animate.min.css" rel="stylesheet" type="text/css" />
-	<!-- END CORE CSS FRAMEWORK -->
-	<!-- BEGIN CSS TEMPLATE -->
 	<link href="assets/plugins/bootstrap-select2/select2.css" rel="stylesheet" type="text/css" media="screen" />
 	<link href="assets/css/style.css" rel="stylesheet" type="text/css" />
 	<link href="assets/css/responsive.css" rel="stylesheet" type="text/css" />
