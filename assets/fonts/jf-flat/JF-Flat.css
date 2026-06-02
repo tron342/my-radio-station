@@ -1,0 +1,32 @@
+/*   
+Theme Name: Invention
+Theme URI: http://themes.jozoor.com/?theme=Invention-WP
+Description: Invention Theme for corporate, portfolio and business websites, responsive and clean layout, more than color skins, Fully Customizable, Comprehensive Theme Options and more..
+Author: Jozoor Team
+Author URI: http://www.jozoor.com
+Version: 1.0
+License: GNU General Public License v2.0
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+*/
+
+/*
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =   
+=     00   00 00 00   00 00 00   00 00 00   00 00 00   00 00  =
+=     00   00    00        00    00    00   00    00   00     =
+=     00   00    00      00      00    00   00    00   00     =  
+=     00   00    00    00        00    00   00    00   00     =
+=  00 00   00 00 00   00 00 00   00 00 00   00 00 00   00     =
+= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+= = = = = = Thanks for watching our source code :)  = = = = = =
+*/
+
+@font-face {
+    font-family: "JF-Flat";
+    src: url('JF-Flat-regular.eot');
+    src: url('JF-Flat-regular.eot?#iefix') format('embedded-opentype'),
+    url('JF-Flat-regular.svg#JF Flat Regular') format('svg'),
+    url('JF-Flat-regular.woff') format('woff'),
+    url('JF-Flat-regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}

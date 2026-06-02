@@ -1,0 +1,6 @@
+Instalação da minha estação de rádio
+
+Descompacte o pacote "radiostation.zip" em um diretório vazio em seu servidor web onde deseja instalar o script.
+Vá para http://www.yourdomain.com/install.php e siga as instruções.
+Siga o assistente passo a passo para instalar o My Radio Station Script e preencha todos os campos obrigatórios.
+Se você ver a mensagem de instalação bem-sucedida, exclua o arquivo install.php do seu site.
